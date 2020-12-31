@@ -2,6 +2,7 @@
 # File name   : setup.py
 # Author      : Adeept
 # Date        : 2020/3/14
+# Modified on 21-12-2020 by Giovanni Bernardo (@Cyb3rn0id)
 
 import os
 import time
@@ -24,10 +25,13 @@ for x in range(1,4):
 	if os.system("sudo apt-get update") == 0:
 		break
 
-os.system("sudo apt-get purge -y wolfram-engine")
-os.system("sudo apt-get purge -y libreoffice*")
-os.system("sudo apt-get -y clean")
-os.system("sudo apt-get -y autoremove")
+# edited on 31-12-2020 by CyB3rn0id
+# commented those 4 lines because takes a lot of time 
+# and I've enough space on the microSD card
+# os.system("sudo apt-get purge -y wolfram-engine")
+# os.system("sudo apt-get purge -y libreoffice*")
+# os.system("sudo apt-get -y clean")
+# os.system("sudo apt-get -y autoremove")
 
 # for x in range(1,4):
 # 	if os.system("sudo apt-get -y upgrade") == 0:
@@ -134,15 +138,22 @@ os.system('sudo chmod 777 //home/pi/startup.sh')
 
 replace_num('/etc/rc.local','fi','fi\n//home/pi/startup.sh start')
 
-try: #fix conflict with onboard Raspberry Pi audio
-	os.system('sudo touch /etc/modprobe.d/snd-blacklist.conf')
-	with open("/etc/modprobe.d/snd-blacklist.conf",'w') as file_to_write:
-		file_to_write.write("blacklist snd_bcm2835")
-except:
-	pass
+# edited on 31-12-2020 by CyB3rn0id
+# commented those 6 lines because I've not found any conflict at 31-12-2020
+# I don't know about what conflict we're talking about, maybe is a thing
+# that was solved at the end of 2020 with the latest Raspbian Os release
+# try: #fix conflict with onboard Raspberry Pi audio
+#	os.system('sudo touch /etc/modprobe.d/snd-blacklist.conf')
+#	with open("/etc/modprobe.d/snd-blacklist.conf",'w') as file_to_write:
+#		file_to_write.write("blacklist snd_bcm2835")
+# except:
+#	pass
 
 os.system("sudo cp -f //home/pi/adeept_rasptank/server/config.txt //etc/config.txt")
 
 print('The program in Raspberry Pi has been installed, disconnected and restarted. \nYou can now power off the Raspberry Pi to install the camera and driver board (Robot HAT). \nAfter turning on again, the Raspberry Pi will automatically run the program to set the servos port signal to turn the servos to the middle position, which is convenient for mechanical assembly.')
-print('restarting...')
-os.system("sudo reboot")
+# edited on 31-12-2020 by CyB3rn0id
+# commented/edited those 2 lines because I want to read the log console
+# and the reboot does not works anyway
+print('Please Restart the Raspberry Pi')
+#os.system("sudo reboot")
