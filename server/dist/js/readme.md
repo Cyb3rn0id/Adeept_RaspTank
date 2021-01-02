@@ -1,1 +1,0 @@
-I've modified those JS files using https://beautifier.io/ for making them more readable for understanding how they works

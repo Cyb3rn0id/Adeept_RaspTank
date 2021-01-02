@@ -103,6 +103,7 @@
             s = n.n(o);
         s.a
     },
+    3220: function(t, e, n) {},
     3663: function(t, e, n) {},
     3779: function(t, e, n) {},
     4102: function(t, e, n) {
@@ -267,7 +268,7 @@
                     }
                 }, [n("ControllerSheet", {
                     attrs: {
-                        modName: "Instruction"
+                        modName: "Istruzioni"
                     }
                 }, [n("InstructionMod")], 1)], 1)], 1)], 1), n("v-col", {
                     attrs: {
@@ -284,7 +285,7 @@
                     }
                 }, [n("ControllerSheet", {
                     attrs: {
-                        modName: "Move Control"
+                        modName: "Movimento"
                     }
                 }, [n("MoveControlMod")], 1)], 1), n("v-col", {
                     attrs: {
@@ -292,7 +293,7 @@
                     }
                 }, [n("ControllerSheet", {
                     attrs: {
-                        modName: "Arm Control"
+                        modName: "Telecamera e Braccio"
                     }
                 }, [n("ArmControlMod")], 1)], 1), n("v-col", {
                     attrs: {
@@ -300,7 +301,7 @@
                     }
                 }, [n("ControllerSheet", {
                     attrs: {
-                        modName: "CVFL Control"
+                        modName: "Line Following"
                     }
                 }, [n("CVFLMod")], 1)], 1)], 1)], 1), n("v-col", {
                     attrs: {
@@ -320,7 +321,7 @@
                     }
                 }, [n("ControllerSheet", {
                     attrs: {
-                        modName: "Hard Ware"
+                        modName: "Sistema"
                     }
                 }, [n("StatusMod")], 1)], 1), n("v-col", {
                     attrs: {
@@ -330,7 +331,7 @@
                     }
                 }, [n("ControllerSheet", {
                     attrs: {
-                        modName: "Actions"
+                        modName: "Azioni"
                     }
                 }, [n("ActionsMod")], 1)], 1), n("v-col", {
                     attrs: {
@@ -348,7 +349,7 @@
                     }
                 }, [n("ControllerSheet", {
                     attrs: {
-                        modName: "FC Control"
+                        modName: "Colore"
                     }
                 }, [n("FindColorMod")], 1)], 1)], 1)], 1)], 1)], 1)], 1)], 1)], 1)])
             },
@@ -511,12 +512,14 @@
                 var t = this,
                     e = t.$createElement,
                     n = t._self._c || e;
-                return n("ButtonsChild", {
+                return n("div", {
+                    staticClass: "arm-wrapper"
+                }, [n("ButtonsChild", {
                     attrs: {
                         buttons: t.buttons,
                         cols: t.cols
                     }
-                })
+                })], 1)
             },
             G = [],
             J = function() {
@@ -658,21 +661,21 @@
                 data: function() {
                     return {
                         buttons: [
-                            [!1, "Grab", "grab", 85, "stop"],
-                            [!1, "Up", "up", 73, "UDstop"],
-                            [!1, "Loose", "loose", 79, "stop"],
-                            [!1, "HandUp", "handup", 80, "HAstop"],
-                            [!1, "Left", "lookleft", 74, "LRstop"],
-                            [!1, "Down", "down", 75, "UDstop"],
-                            [!1, "Right", "lookright", 76, "LRstop"],
-                            [!1, "HandDown", "handdown", 186, "HAstop"]
+                            [!1, "Chiudi (P)", "grab", 80, "stop"],
+                            [!1, "Cam Su (R)", "up", 82, "UDstop"],
+                            [!1, "Apri (O)", "loose", 79, "stop"],
+                            [!1, "Ruota sx (K)", "lookleft", 75, "LRstop"],
+                            [!1, "Cam giu (F)", "down", 70, "UDstop"],
+                            [!1, "Ruota dx (L)", "lookright", 76, "LRstop"],
+                            [!1, "Br. avanti (N)", "handdown", 78, "HAstop"],
+                            [!1, "Br. dietro (M)", "handup", 77, "HAstop"]
                         ],
-                        cols: 4
+                        cols: 3
                     }
                 }
             },
             lt = ct,
-            ut = Object(h["a"])(lt, z, G, !1, null, "53a95287", null),
+            ut = (n("fb92"), Object(h["a"])(lt, z, G, !1, null, "18853410", null)),
             dt = ut.exports,
             ht = function() {
                 var t = this,
@@ -695,8 +698,8 @@
                     return {
                         buttons: [
                             [!1, "Motion Get", "motionGet", "", "", "stopCV"],
-                            [!1, "Auto Matic", "automatic", "", "", "automaticOff"],
-                            [!1, "POLICE LIGHT", "police", "", "", "policeOff"],
+                            [!1, "Automatic", "automatic", "", "", "automaticOff"],
+                            [!1, "Police Light", "police", "", "", "policeOff"],
                             [!1, "Track Line", "trackLine", "", "", "trackLineOff"]
                         ],
                         cols: 1
@@ -1240,7 +1243,7 @@
                                 attrs: {
                                     cols: "4"
                                 }
-                            }, [t._v("Base Control")]), t._l(t.instructContent["Base Control"][0], (function(e) {
+                            }, [t._v("Controlli")]), t._l(t.instructContent["Controlli"][0], (function(e) {
                                 return n("v-col", {
                                     key: e,
                                     staticClass: "text--secondary",
@@ -1259,7 +1262,7 @@
                     attrs: {
                         "no-gutters": ""
                     }
-                }, [n("v-spacer"), t._l(t.instructContent["Base Control"][1], (function(e, o) {
+                }, [n("v-spacer"), t._l(t.instructContent["Controlli"][1], (function(e, o) {
                     return n("v-col", {
                         key: o,
                         attrs: {
@@ -1284,22 +1287,22 @@
                         cols: 1,
                         witchOpen: 0,
                         instructContent: {
-                            "Base Control": [
-                                ["Move Control", "Arm Control"],
+                            "Controlli": [
+                                ["Movimento", "Braccio e Camera"],
                                 [{
-                                    W: "move forward",
-                                    A: "turn left",
-                                    S: "move backward",
-                                    D: "turn right"
+                                    W: "avanti",
+                                    A: "sinistra",
+                                    S: "indietro",
+                                    D: "destra"
                                 }, {
-                                    I: "arm up",
-                                    J: "arm left turn",
-                                    K: "arm down",
-                                    L: "arm right turn",
-                                    U: "grab",
-                                    O: "loose",
-                                    P: "hand up",
-                                    ";": "hand down"
+                                    R: "alza telecamera",
+                                    F: "abbassa telecamera",
+									K: "ruota pinza sx",
+                                    L: "ruota pinza dx",
+                                    P: "chiudi pinza",
+                                    O: "apri pinza",
+                                    M: "braccio indietro",
+                                    N: "braccio avanti"
                                 }]
                             ],
                             "About Us": "Adeept is a technical service team of open source software and hardware. Dedicated to applying the Internet and the latest industrial technology in open source area, we strive to provide best hardware support and software service for general makers and electronic enthusiasts around the world. We aim to create infinite possibilities with sharing. No matter what field you are in, we can lead you into the electronic world and bring your ideas into reality.",
@@ -1927,6 +1930,12 @@
         var o = n("98f9"),
             s = n.n(o);
         s.a
+    },
+    fb92: function(t, e, n) {
+        "use strict";
+        var o = n("3220"),
+            s = n.n(o);
+        s.a
     }
 });
-//# sourceMappingURL=app.26a4760b.js.map
+//# sourceMappingURL=app.75ae363b.js.map
