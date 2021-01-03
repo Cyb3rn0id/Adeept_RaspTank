@@ -18,6 +18,8 @@ In tale pagina HTML non c'è praticamente nulla perchè tutta l'interfaccia è r
 
 La comunicazione tra il javascript e gli script python avviene tramite websocket mediante lo script _server.py_ su diverse porte (10123 per motori/servo, 2256 per inviare le informazioni CPU/RAM). Lo script _server.py_ gestisce tutta la parte di ricetrasmissione delle informazioni inviate tramite websocket.
 
+> Il programma non parte se non è collegato l'HAT dal momento che la prima cosa che viene fatta è portare i servocomandi in posizione di default per cui se non c'è comunicazione verso il PCA9685 viene sollevata un'eccezione e il programma si arresta. Dopo di ciò viene avviato il server con Flask che prova ad avviare pr prima cosa la telecamera, se la telecamera non è collegata o non c'è comunicazione, il programma si arresta. A tal proposito, se si verificano problemi con la telecamera, seguite questi [miei appunti](https://github.com/Cyb3rn0id/TIL/blob/master/raspberry/test_raspberry_pi_camera.md). 
+
 Per fare modifiche _rapide_ all'interfaccia è possibile modificare i files Javascript. Io ho utilizzato [beautifier](https://beautifier.io/) per poter aggiungere nuovamente spazi e tabulazioni che, per questioni di compressione, vengono eliminati nei files originali (togliendo tutti i caratteri inutilizzati si velocizza il caricamento del Javascript dato che se ne riduce la dimensione anche di oltre il 50%). In questo modo i files diventano più leggibili ed è più agevole lavorarci.
 
 Nelle cartelle _originals_, all'interno di ogni sotto-cartella, sono contenuti i files originali della Adeept. Il readme originale della Adeept, con le istruzioni per l'installazione, l'ho rinominato in [adeept_readme.md](adeept_readme.md).  
@@ -108,7 +110,9 @@ I fotoaccoppiatori per il line tracking sono collegati ai GPIO 19 (destro), 16 (
 
 ### Indicazione carica batteria
 
-La tensione risultante dalle 2 batterie messe in serie (8.4V) viene misurata mediante una serie di partitori resistivi e comparatori contenuti nell'LM324: quando tutti e 4 i led rossi (LED6,7,8,9) sono accesi, le batterie sono completamente cariche. Con un solo LED acceso le batterie vanno rimosse e ricaricate. Purtroppo sull'interfaccia non c'è indicazione della carica. Si sarebbero potute utilizzare le 4 uscite che pilotano i led per triggerare 4 GPIO inutilizzati e dare indicazione di carica anche sull'interfaccia Web.
+La tensione risultante dalle 2 batterie messe in serie (8.4V) viene misurata mediante una serie di partitori resistivi e comparatori contenuti nell'LM324: quando tutti e 4 i led rossi (LED6,7,8,9) sono accesi, le batterie sono completamente cariche (tensione maggiore di 7.6V, ovvero batterie con tensione a partire da 3.8V). Con un solo LED acceso le batterie vanno rimosse e ricaricate (batteria singola a 3V). 
+
+Purtroppo sull'interfaccia web non c'è indicazione della carica. Si sarebbero potute utilizzare le 4 uscite che pilotano i led per triggerare 4 GPIO inutilizzati e dare indicazione di carica anche sull'interfaccia Web.
 
 ### Altro
 
