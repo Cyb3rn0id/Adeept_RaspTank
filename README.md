@@ -1,6 +1,14 @@
 ## Modifiche e appunti sul Rasptank della Adeept
 
-L'interfaccia web di controllo del Robot è realizzata con [vue.js](https://vuejs.org/) e Adeept ha anche messo a disposizione i [sorgenti nel suo forum](https://www.adeept.com/forum/forum.php?mod=viewthread&tid=280). E' possibile lavorare con vue.js anche da [Visual Studio](https://docs.microsoft.com/it-it/visualstudio/javascript/quickstart-vuejs-with-nodejs?view=vs-2019).  
+Lo script python di setup crea un file bash chiamato _startup.sh_ in _/home/pi_. In tale file viene richiamato l'interprete python che esegue il file _/home/pi/adeept_rasptank/server/webServer.py_. Il file bash verrà richiamato sempre all'avvio del sistema dal momento che viene inclusa la chiamata in _rc.local_ (contenuto in _/etc_). Per ulteriori informazioni su come si crea uno script di avvio si può fare riferimento a [questo mio appunto](https://github.com/Cyb3rn0id/TIL/blob/master/raspberry/eseguire_script_python_avvio.md).
+
+Lo script _webServer.py_ avvia un socket Flask sulla porta 5000 che permette una comunicazione bidirezionale tra client (il nostro browser) e server (che gira sul ROV). Tutta la roba che il socket Flask deve servire all'utente si trova nel file _/server/app.py_. Quando ci colleghiamo alla porta 5000 dell'indirizzo IP del nostro Raspberry Pi (es.: _http://192.168.1.13:5000_) viene servita la pagina _/server/dist/index.html_.
+
+>Un tutorial interessante su come eseguire uno streaming utilizzando Flask si trova [qui](https://www.twilio.com/docs/voice/tutorials/consume-real-time-media-stream-using-websockets-python-and-flask).
+
+In tale pagina HTML non c'è praticamente nulla perchè tutta l'interfaccia è realizzata dal javascript che si trova in _/server/dist/js/app.js_ (_app.75ae363b.js_ nel repository originale della Adeept). Tale Javascript che genera l'interfaccia è realizzato con [vue.js](https://vuejs.org/) e Adeept ha anche messo a disposizione i [sorgenti nel suo forum](https://www.adeept.com/forum/forum.php?mod=viewthread&tid=280). E' possibile lavorare con vue.js anche da [Visual Studio](https://docs.microsoft.com/it-it/visualstudio/javascript/quickstart-vuejs-with-nodejs?view=vs-2019).  
+
+La comunicazione tra il javascript e gli script python avviene tramite websocket mediante lo script _server.py_ su diverse porte (10123 per motori/servo, 2256 per inviare le informazioni CPU/RAM). Lo script _server.py_ gestisce tutta la parte di ricetrasmissione delle informazioni inviate tramite websocket.
 
 Per fare modifiche _rapide_ all'interfaccia è possibile modificare i files Javascript. Io ho utilizzato [beautifier](https://beautifier.io/) per poter aggiungere nuovamente spazi e tabulazioni che, per questioni di compressione, vengono eliminati nei files originali (togliendo tutti i caratteri inutilizzati si velocizza il caricamento del Javascript dato che se ne riduce la dimensione anche di oltre il 50%). In questo modo i files diventano più leggibili ed è più agevole lavorarci.
 
@@ -29,7 +37,7 @@ L'indicazione di RAM e CPU è contenuta nelle righe da 470 a 472 ed è così str
 - _55_: sotto questo valore, l'etichetta assume sfondo di colore verde 
 - _70_: sotto questo valore, l'etichetta assume sfondo di colore arancione, da questo valore compreso in su, l'etichetta assume sfondo di colore rosso
 
-Questi valori vengono richiesti dal javascript allo script python, mediante websocket, passando il valore _get_info_ (riga 496 di app.js). Lo script _webServer.py_ rileva tale valore a riga 435 e ritorna un array che viene rilevato dal javascript a riga 485, con il quale compila le etichette
+Questi valori vengono richiesti dal javascript allo script python, mediante websocket, passando il valore _get_info_ (riga 496 di app.js). Lo script _webServer.py_ rileva tale valore a riga 435 e prepara i valori da passare mediante la funzione _info_get_ definita in _server.py_ a riga 219, che sfrutta le funzioni definite in _info.py_. _webServer.py_ infine ritorna un array che viene rilevato dal javascript (_app.jps_) a riga 485, con il quale compila le etichette. 
 
 ### Tasti movimento
 
@@ -43,15 +51,17 @@ Nel file _app.js_ i tasti per eseguire le funzioni sono definiti, ad esempio, in
 - _87_ : codice ascii del tasto sulla tastiera del PC associata al tasto 
 - _DS_ : nome della funzione (richiamata in _webServer.py_) da eseguire al rilascio del tasto (es.: ferma il movimento del servo)
 
-I comandi del braccio e del movimento della telecamera si trovano nelle righe di _app.js_ da 664 a 671, ho cambiato le lettere associate mettendone di più congeniali per me e cambiando soprattutto il comando _handdown_, che era associato al codice ascii 186 che per quelli della Adeept era il tasto ";", mentre per me non funzionava. 
+I comandi del braccio e del movimento della telecamera si trovano nelle righe di _app.js_ da 664 a 671, ho cambiato le lettere associate mettendone di più congeniali per me e cambiando soprattutto il comando _handdown_, che era associato al codice ascii 186 che per quelli della Adeept era il tasto ";", mentre per me non funzionava. Nel paragrafo successivo ho fatto una tabella con le modifiche che ho fatto.
 
 >E' bene non utilizzare codici ASCII superiori al 127 dal momento che non sono renderizzati uguali per tutte le culture.
 
-I servocomandi sono gestiti in I2C mediante il circuito integrato [PCA9685](https://www.nxp.com/products/power-management/lighting-driver-and-controller-ics/ic-led-controllers/16-channel-12-bit-pwm-fm-plus-ic-bus-led-controller:PCA9685) che nasce per il controllo in PWM dei led ma è in realtà in grado di generare segnali PWM utilizzabili anche con i servocomandi e viene utilizzata una libreria [Adafruit](https://learn.adafruit.com/16-channel-pwm-servo-driver/python-circuitpython) per tale scopo.
+### Servocomandi
 
-Le funzioni che muovono i servocomandi sono contenute in _servo.py_ e gestite da _webServer.py_ nella funzione _robotCtrl_ a partire da riga 232. Quando si muove il braccio in avanti o indietro, due servocomandi vengono gestiti insieme per fare in modo che la parte terminale della pinza (servocomando 13) sia sempre parallela al suolo, non è quindi possibile, ad esempio, estendere il braccio completamente in verticale.
+I servocomandi sono gestiti in I2C mediante il circuito integrato [PCA9685](https://www.nxp.com/products/power-management/lighting-driver-and-controller-ics/ic-led-controllers/16-channel-12-bit-pwm-fm-plus-ic-bus-led-controller:PCA9685) che nasce per il controllo in PWM dei led ma è in realtà in grado di generare segnali PWM utilizzabili anche con i servocomandi e viene utilizzata una libreria [Adafruit](https://learn.adafruit.com/16-channel-pwm-servo-driver/python-circuitpython) per tale scopo (_Adafruit_PCA9685_).
 
-Nella seguente tabella ho riportato alcune informazioni sui servocomandi indicando i comandi originali della Adeept e come li ho ridefiniti:
+Le funzioni che muovono i servocomandi sono contenute in _servo.py_ e gestite da _webServer.py_ nella funzione _robotCtrl_ a partire da riga 232 (lo script _RPIservo.py_ non è utilizzato ed è di test). Quando si muove il braccio in avanti o indietro, due servocomandi vengono gestiti insieme per fare in modo che la parte terminale della pinza (servocomando 13) sia sempre parallela al suolo, non è quindi possibile, ad esempio, estendere il braccio completamente in verticale.
+
+Nella seguente tabella ho riportato alcune informazioni sui servocomandi indicando i comandi originali della Adeept e come li ho ridefiniti in _app.js_ come detto al paragrafo precedente:
 
 | Comando                         | Nome funzione | Servocomando | Tasto originale (ASCII) | Tasto nuovo (ASCII) |
 |---------------------------------|---------------|--------------|-------------------------|---------------------|
@@ -66,14 +76,36 @@ Nella seguente tabella ho riportato alcune informazioni sui servocomandi indican
 
 Si consiglia di non utilizzare i tasti sull'interfaccia per il movimento ma le lettere sulla tastiera: capita infatti che a volte i tasti sull'interfaccia si blocchino e il servocomando non si ferma, ma questo potrebbe essere un problema che ho soltanto io e magari dipendente dal PC o dal browser utilizzato.
 
+### Motore
+
 I comandi del movimento del robot sono contenuti nelle righe di _app.js_ da 745 a 747 e le funzioni definite in _move.py_. I tasti per il movimento in avanti e indietro a me risultavano invertiti nonostante abbia seguito scrupolosamente le istruzioni di montaggio, mentre il movimento a destra e sinistra era giusto: se si fosse trattato di un batch diverso di motori mi sarei aspettato che fossero invertiti anche i movimenti destra/sinistra. Ad ogni modo nel forum della Adeept in molti hanno lamentato questo stesso identico comportamento. L'ho risolto semplicemente modificano in _move.py_ le righe 22 e 23 _Dir_forward=1_ anzichè _Dir_forward=0_ e così anche per la riga successiva.
 
->Ogni volta che si fa una modifica ai files, per poter apprezzare il cambiamento è necessario svuotare la cache del browser, chiuderlo, riaprirlo e ridigitare l'indirizzo, altrimenti il browser carica sempre il javascript presente nella cache e non vediamo nessun cambiamento.
+Viene utilizzato il classico L298N per il pilotaggio di potenza dei motoriduttori: il motore A è gestito dai GPIO 4 (Enable), 14 e 15 (pin1, pin2); il motore B è gestito dai GPIO 17 (Enable), 27 e 18 (pin1, pin2). La variazione della velocità viene eseguita mandando il segnale PWM sul pin di Enable mentre la direzione di rotazione è gestita invertendo lo stato dei pin1 e 2 del motore.
+
+
+### Modulo Ultrasuoni
+
+Il Modulo ultrasuoni è collegato ai GPIO11 (trigger) e GPIO8 (echo). Le funzioni per gestirlo si trovano nello script _ultra.py_. In _server.py_, a riga 243, c'è la funzione _ultra_send_client()_ che serve ad inviare la distanza rilevata ma in nè in _webSever.py_ nè in _app.js_ sono presenti funzioni per visualizzare la distanza sull'interfaccia web.
+
+### Leds
+
+Le funzioni per il controllo dei led WS2818 sono contenute nello script _robotLight.py_ (gli script _LED.py_ e _LEDapp.py_ sono script di test e non vengono usati dal programma principale).
+
+In tale script è possibile notare che, oltre ai Leds pilotati tramite il GPIO12 (gestiti dalla libreria _rpi_ws281x_, il pin utilizzato è definito a riga 15), sono inizializzati tre GPIO a partire da riga 31: GPIO5, GPIO6 e GPIO13. Su tali GPIO, da [schema elettrico](docs/schematic_AdeeptMotorShield_v2.pdf) sono collegati 3 led: rispettivamente LED0, LED1 e LED2 che si accendono portando i GPIO a livello basso. Le uniche istruzioni per pilotare questi 3 led si trovano soltanto in queste 3 righe: i led vengono accesi all'avvio dello script e basta.
+
+### Modulo Line tracking
+
+I fotoaccoppiatori per il line tracking sono collegati ai GPIO 19 (destro), 16 (centrale) e 20 (sinistro). Lo script che li gestisce è _findline.py_
 
 ### Altro
 
-Le istruzioni sono contenute dalla riga 1290, il nome "Controlli" che ho tradotto è utilizzato anche come segnaposto per le funzioni di espansione del menù, per cui è necessario cambiarlo anche in altre parti del codice altrimenti quella parte di interfaccia non viene visualizzata.
+Le istruzioni che compaiono sull'interfaccia sono contenute dalla riga 1290 di _app.js_, il nome "Controlli" che ho tradotto è utilizzato anche come segnaposto per le funzioni di espansione del menù, per cui è necessario cambiarlo anche in altre parti del codice altrimenti quella parte di interfaccia non viene visualizzata.
 
+Sull'HAT sono disponibili altri due connettori denominati RGB1 e RGB2, pensati, probabilmente per collegare strisce di led RGB per le quali i colori vengono gestiti singolarmente sul connettore RGB1 sono collegati (partendo da pin1): 3.3V, GPIO22, 23 e 24. Sul connettore RGB2: 3.3V, GPIO10, 9 e 25.
+
+### Note
+
+Ogni volta che si fa una modifica ai files, per poter apprezzare il cambiamento è necessario svuotare la cache del browser, chiuderlo, riaprirlo e ridigitare l'indirizzo, altrimenti il browser carica sempre il javascript presente nella cache e non vediamo nessun cambiamento.
 
 ### Problemi vari sul Raspberry.
 
