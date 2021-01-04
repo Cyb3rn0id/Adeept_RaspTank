@@ -25,7 +25,9 @@ import websockets
 import json
 import app
 
-OLED_connection = 1
+OLED_connection = 0 #era =1, il display oled non c'è
+'''
+#parte rimossa
 try:
     import OLED
     screen = OLED.OLED_ctrl()
@@ -35,7 +37,7 @@ except:
     OLED_connection = 0
     print('OLED disconnected')
     pass
-
+'''
 functionMode = 0
 speed_set = 100
 rad = 0.5
@@ -144,6 +146,7 @@ def functionSelect(command_input, response):
 
     elif 'policeOff' == command_input:
         RL.pause()
+        RL.breath(0,255,0) ## breathing col colore verde
         move.motorStop()
 
     elif 'automatic' == command_input:
@@ -363,27 +366,27 @@ def wifi_check():
         ap_threading.start()                                  #Thread starts
         if OLED_connection:
             screen.screen_show(2, 'AP Starting 10%')
-        RL.setColor(0,16,50)
+        #RL.setColor(0,16,50)
         time.sleep(1)
         if OLED_connection:
             screen.screen_show(2, 'AP Starting 30%')
-        RL.setColor(0,16,100)
+        #RL.setColor(0,16,100)
         time.sleep(1)
         if OLED_connection:
             screen.screen_show(2, 'AP Starting 50%')
-        RL.setColor(0,16,150)
+        #RL.setColor(0,16,150)
         time.sleep(1)
         if OLED_connection:
             screen.screen_show(2, 'AP Starting 70%')
-        RL.setColor(0,16,200)
+        #RL.setColor(0,16,200)
         time.sleep(1)
         if OLED_connection:
             screen.screen_show(2, 'AP Starting 90%')
-        RL.setColor(0,16,255)
+        #RL.setColor(0,16,255)
         time.sleep(1)
         if OLED_connection:
             screen.screen_show(2, 'AP Starting 100%')
-        RL.setColor(35,255,35)
+        #RL.setColor(35,255,35)
         if OLED_connection:
             screen.screen_show(2, 'IP:192.168.12.1')
             screen.screen_show(3, 'AP MODE ON')
@@ -502,25 +505,30 @@ async def main_logic(websocket, path):
     await recv_msg(websocket)
 
 if __name__ == '__main__':
-    switch.switchSetup()
-    switch.set_all_switch_off()
+    time.sleep(2) 
+    #switch.switchSetup()
+    #switch.set_all_switch_off()
 
-    HOST = ''
-    PORT = 10223                              #Define port serial 
-    BUFSIZ = 1024                             #Define buffer size
-    ADDR = (HOST, PORT)
+    #HOST = ''
+    #PORT = 10223                              #Define port serial 
+    #BUFSIZ = 1024                             #Define buffer size
+    #ADDR = (HOST, PORT)
 
     global flask_app
-    flask_app = app.webapp()
-    flask_app.startthread()
-
+    
     try:
         RL=robotLight.RobotLight()
         RL.start()
-        RL.breath(70,70,255)
+        RL.setColor(255,0,255) ## colore viola
+        time.sleep(1) # per 1 secondo
+        RL.breath(0,255,0) ## breathing col colore verde
     except:
-        print('Use "sudo pip3 install rpi_ws281x" to install WS_281x package\n使用"sudo pip3 install rpi_ws281x"命令来安装rpi_ws281x')
+        # libreria rpi_ws281x non installata
+        print('Use "sudo pip3 install rpi_ws281x" to install WS_281x package')
         pass
+
+    flask_app = app.webapp()
+    flask_app.startthread()
 
     while  1:
         wifi_check()
@@ -532,15 +540,16 @@ if __name__ == '__main__':
             break
         except Exception as e:
             print(e)
-            RL.setColor(0,0,0)
+            RL.setColor(255,192,203) # colore rosa su mancata connessione
 
         try:
-            RL.setColor(0,80,255)
+            pass
+            #RL.setColor(0,80,255)
         except:
             pass
     try:
         asyncio.get_event_loop().run_forever()
     except Exception as e:
         print(e)
-        RL.setColor(0,0,0)
+        RL.setColor(255,0,0) # colore rosso su questo errore 
         move.destroy()

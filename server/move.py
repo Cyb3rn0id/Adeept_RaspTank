@@ -19,8 +19,8 @@ Motor_A_Pin2  = 15
 Motor_B_Pin1  = 27
 Motor_B_Pin2  = 18
 
-Dir_forward   = 1
-Dir_backward  = 0
+Dir_forward   = 0
+Dir_backward  = 1
 
 left_forward  = 0
 left_backward = 1
@@ -28,7 +28,7 @@ left_backward = 1
 right_forward = 0
 right_backward= 1
 
-pwn_A = 0
+pwm_A = 0
 pwm_B = 0
 
 def motorStop():#Motor stops

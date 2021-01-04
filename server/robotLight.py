@@ -11,7 +11,7 @@ import threading
 
 class RobotLight(threading.Thread):
 	def __init__(self, *args, **kwargs):
-		self.LED_COUNT	  	= 16	  # Number of LED pixels.
+		self.LED_COUNT	  	= 12	  # Number of LED pixels.
 		self.LED_PIN		= 12	  # GPIO pin connected to the pixels (18 uses PWM!).
 		self.LED_FREQ_HZ	= 800000  # LED signal frequency in hertz (usually 800khz)
 		self.LED_DMA		= 10	  # DMA channel to use for generating signal (try 10)
@@ -28,9 +28,9 @@ class RobotLight(threading.Thread):
 
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(5, GPIO.OUT)
-		GPIO.setup(6, GPIO.OUT)
-		GPIO.setup(13, GPIO.OUT)
+		GPIO.setup(5, GPIO.OUT) # led 0 = rosso
+		GPIO.setup(6, GPIO.OUT) # led 1 = verde
+		GPIO.setup(13, GPIO.OUT) # led 2 = blu
 
 		# Create NeoPixel object with appropriate configuration.
 		self.strip = Adafruit_NeoPixel(self.LED_COUNT, self.LED_PIN, self.LED_FREQ_HZ, self.LED_DMA, self.LED_INVERT, self.LED_BRIGHTNESS, self.LED_CHANNEL)
@@ -176,13 +176,14 @@ class RobotLight(threading.Thread):
 			self.lightChange()
 			pass
 
-
+# quando il programma robotLight.py viene richiamato da solo da terminale,
+# fa partire il breathing
 if __name__ == '__main__':
 	RL=RobotLight()
 	RL.start()
-	RL.breath(70,70,255)
-	time.sleep(15)
-	RL.pause()
-	RL.frontLight('off')
-	time.sleep(2)
-	RL.police()
+	RL.breath(255,0,255) # breath colore viola
+	#time.sleep(15)
+	#RL.pause()
+	#RL.frontLight('off')
+	#time.sleep(2)
+	#RL.police()

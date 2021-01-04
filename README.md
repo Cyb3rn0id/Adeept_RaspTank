@@ -8,15 +8,15 @@ Lo script python di setup crea un file bash chiamato _startup.sh_ in _/home/p
 
 > Per ulteriori informazioni su come si crea uno script di avvio si può fare riferimento a [questo mio appunto](https://github.com/Cyb3rn0id/TIL/blob/master/raspberry/eseguire_script_python_avvio.md).
 
-Lo script _webServer.py_ avvia un socket Flask sulla porta 5000 che permette una comunicazione bidirezionale tra client (il nostro browser) e server (che gira sul ROV). Tutta la roba che il socket Flask deve servire all'utente si trova nel file _/server/app.py_. Quando ci colleghiamo alla porta 5000 dell'indirizzo IP del nostro Raspberry Pi (es.: _http://192.168.1.13:5000_) viene servita la pagina _/server/dist/index.html_.
+Lo script _webServer.py_ avvia un socket Flask sulla porta 5000 che permette una comunicazione bidirezionale tra client (il nostro browser) e server (che gira sul ROV). Tutta la roba che il socket Flask deve servire all'utente su richiesta http si trova nel file _/server/app.py_. Quando ci colleghiamo alla porta 5000 dell'indirizzo IP del nostro Raspberry Pi (es.: _http://192.168.1.13:5000_) viene servita la pagina _/server/dist/index.html_.
 
 > Un tutorial interessante su come eseguire uno streaming utilizzando Flask si trova [qui](https://www.twilio.com/docs/voice/tutorials/consume-real-time-media-stream-using-websockets-python-and-flask).
 
 In tale pagina HTML non c'è praticamente nulla perchè tutta l'interfaccia è realizzata dal javascript che si trova in _/server/dist/js/app.js_ (_app.75ae363b.js_ nel repository originale della Adeept). Tale Javascript che genera l'interfaccia è realizzato con [vue.js](https://vuejs.org/) e Adeept ha anche messo a disposizione i [sorgenti nel suo forum](https://www.adeept.com/forum/forum.php?mod=viewthread&tid=280). 
 
-> E' possibile lavorare con vue.js anche da [Visual Studio](https://docs.microsoft.com/it-it/visualstudio/javascript/quickstart-vuejs-with-nodejs?view=vs-2019).  
+> E' possibile lavorare con vue.js anche da [Visual Studio](https://docs.microsoft.com/it-it/visualstudio/javascript/quickstart-vuejs-with-nodejs?view=vs-2019)  
 
-La comunicazione tra il javascript e gli script python avviene tramite websocket mediante lo script _server.py_ su diverse porte (10123 per motori/servo, 2256 per inviare le informazioni CPU/RAM). Lo script _server.py_ gestisce tutta la parte di ricetrasmissione delle informazioni inviate tramite websocket.
+La comunicazione tra il javascript e gli script python avviene tramite websocket mediante lo script _server.py_ su diverse porte (10123 per motori/servo, 2256 per inviare le informazioni CPU/RAM). Lo script _server.py_ gestisce tutta la parte di ricetrasmissione delle informazioni inviate tramite websocket tra Javascript e Python. I file di test, non realmente utilizzati dall'applicazione, li ho rinominati mettendo un underscore prima del nome.
 
 > Il programma non parte se non è collegato l'HAT dal momento che la prima cosa che viene fatta è portare i servocomandi in posizione di default per cui se non c'è comunicazione verso il PCA9685 viene sollevata un'eccezione e il programma si arresta. Dopo di ciò viene avviato il server con Flask che prova ad avviare pr prima cosa la telecamera, se la telecamera non è collegata o non c'è comunicazione, il programma si arresta. A tal proposito, se si verificano problemi con la telecamera, seguite questi [miei appunti](https://github.com/Cyb3rn0id/TIL/blob/master/raspberry/test_raspberry_pi_camera.md). 
 
@@ -69,7 +69,7 @@ I comandi del braccio e del movimento della telecamera si trovano nelle righe di
 
 I servocomandi sono gestiti in I2C mediante il circuito integrato [PCA9685](https://www.nxp.com/products/power-management/lighting-driver-and-controller-ics/ic-led-controllers/16-channel-12-bit-pwm-fm-plus-ic-bus-led-controller:PCA9685) che nasce per il controllo in PWM dei led ma è in realtà in grado di generare segnali PWM utilizzabili anche con i servocomandi e viene utilizzata una libreria [Adafruit](https://learn.adafruit.com/16-channel-pwm-servo-driver/python-circuitpython) per tale scopo (_Adafruit_PCA9685_).
 
-Le funzioni che muovono i servocomandi sono contenute in _servo.py_ e gestite da _webServer.py_ nella funzione _robotCtrl()_ a partire da riga 232 (lo script _RPIservo.py_ non è utilizzato ed è di test). Quando si muove il braccio in avanti o indietro, due servocomandi (12 e 13) vengono gestiti insieme per fare in modo che la parte terminale della pinza (mossa dal servocomando 13) sia sempre parallela al suolo. Non è quindi possibile, ad esempio, estendere il braccio completamente in verticale.
+Le funzioni che muovono i servocomandi sono contenute in _RPIservo.py_ e gestite da _webServer.py_ nella funzione _robotCtrl()_ a partire da riga 232. Quando si muove il braccio in avanti o indietro, due servocomandi (12 e 13) vengono gestiti insieme per fare in modo che la parte terminale della pinza (mossa dal servocomando 13) sia sempre parallela al suolo. Non è quindi possibile, ad esempio, estendere il braccio completamente in verticale.
 
 Nella seguente tabella ho riportato alcune informazioni sui servocomandi indicando i comandi originali della Adeept e come li ho ridefiniti in _app.js_ come detto al paragrafo precedente:
 
@@ -88,7 +88,9 @@ Si consiglia di non utilizzare i tasti sull'interfaccia per il movimento ma le l
 
 ### Motore
 
-I comandi del movimento del robot sono contenuti nelle righe di _app.js_ da 745 a 747 e le funzioni definite in _move.py_. I tasti per il movimento in avanti e indietro a me risultavano invertiti nonostante abbia seguito scrupolosamente le istruzioni di montaggio, mentre il movimento a destra e sinistra era giusto: se si fosse trattato di un batch diverso di motori mi sarei aspettato che fossero invertiti anche i movimenti destra/sinistra. Ad ogni modo nel forum della Adeept in molti hanno lamentato questo stesso identico comportamento. L'ho risolto semplicemente modificano in _move.py_ le righe 22 e 23 _Dir_forward=1_ anzichè _Dir_forward=0_ e così anche per la riga successiva.
+I comandi del movimento del robot sono contenuti nelle righe di _app.js_ da 745 a 747 e le funzioni definite in _move.py_. I tasti per il movimento in avanti e indietro a me risultavano invertiti nonostante abbia seguito scrupolosamente le istruzioni di montaggio, mentre il movimento a destra e sinistra era giusto: se si fosse trattato di un batch diverso di motori mi sarei aspettato che fossero invertiti anche i movimenti destra/sinistra. Ad ogni modo nel forum della Adeept in molti hanno lamentato questo stesso identico comportamento. Nel forum dicono di aigre in _move.py_ alle righe 22 e 23 mettendo _Dir_forward=1_ anzichè _Dir_forward=0_. In realtà così facendo si aggiusta il movimento avanti/indietro ma si inverte quello destra/sinistra. Per tale motivo ho deciso di lasciare inalterato _move.py_ e agire nel javascript (_app.js_) invertendo le funzioni _forward_ e _backward_ a riga 745 e 746.
+
+In _move.py_ a riga 31 c'era scritto _pwn_A=0_ anzichè _pwm_A=0_, questo non causava nessun problema ma ho corretto lo stesso.
 
 Viene utilizzato il classico L298N per il pilotaggio di potenza dei motoriduttori: il motore A (sinistro guardando il ROV dalla parte posteriore) è gestito dai GPIO 4 (Enable), 14 e 15 (pin1, pin2); il motore B (destro) è gestito dai GPIO 17 (Enable), 27 e 18 (pin1, pin2). La variazione della velocità viene eseguita mandando il segnale PWM sul pin di Enable mentre la direzione di rotazione è gestita invertendo lo stato dei pin1 e 2 del motore. Il motore è quindi pilotato in modalità _Sign-Magnitude_ ovvero il cambio di direzione è gestito dall'inversione dei due pin del motore e la velocità variata con l'enable. I motori si spengono completamente portando tutti i pin a GND.
 
@@ -96,17 +98,27 @@ Viene utilizzato il classico L298N per il pilotaggio di potenza dei motoriduttor
 
 ### Modulo Ultrasuoni
 
-Il Modulo ultrasuoni è collegato ai GPIO11 (trigger) e GPIO8 (echo). Le funzioni per gestirlo si trovano nello script _ultra.py_. In _server.py_, a riga 243, c'è la funzione _ultra_send_client()_ che serve ad inviare la distanza rilevata ma in nè in _webSever.py_ nè in _app.js_ sono presenti funzioni per visualizzare la distanza sull'interfaccia web.
+Il Modulo ultrasuoni è collegato ai GPIO11 (trigger) e GPIO8 (echo). Le funzioni per gestirlo si trovano nello script _ultra.py_. In _server.py_, a riga 243, c'è la funzione _ultra_send_client()_ che serve ad inviare la distanza rilevata. Gli ultrasuoni vengono utilizzati quando il ROV viene messo in modalità automatica: a questo punto il controllo passa alla funzione _automaticProcessing_ in _functions.py_ (riga 179)
 
 ### Leds
 
 Le funzioni per il controllo dei led WS2818 sono contenute nello script _robotLight.py_ (gli script _LED.py_ e _LEDapp.py_ sono script di test e non vengono usati dal programma principale).
 
-In tale script è possibile notare che, oltre ai Leds pilotati tramite il GPIO12 (gestiti dalla libreria _rpi_ws281x_, il pin utilizzato è definito a riga 15), sono inizializzati tre GPIO a partire da riga 31: GPIO5, GPIO6 e GPIO13. Su tali GPIO, da [schema elettrico](docs/schematic_AdeeptMotorShield_v2.pdf) sono collegati 3 led: rispettivamente LED0 (rosso), LED1 (verde) e LED2 (blu) che si accendono portando i GPIO a livello basso. Le uniche istruzioni per pilotare questi 3 led si trovano soltanto in queste 3 righe: i led vengono accesi all'avvio dello script e basta.
+In tale script è possibile notare che, oltre ai Leds pilotati tramite il GPIO12 (gestiti dalla libreria _rpi_ws281x_, il pin utilizzato è definito a riga 15), sono inizializzati tre GPIO a partire da riga 31: GPIO5, GPIO6 e GPIO13. Su tali GPIO, da [schema elettrico dell'HAT](docs/schematic_AdeeptMotorShield_v2.pdf) sono collegati 3 led: rispettivamente LED0 (rosso), LED1 (verde) e LED2 (blu) che si accendono portando i GPIO a livello basso. Probabilmente negli altri prodotti Adeept, come la RPI Car, questi GPIO vengono utilizzati per pilotare le luci frontali (dei fari) dato che sono presenti delle funzioni _frontLight_, _switch_, _set_all_switch_off_, _headLight_ nonchè lo script _switch.py_ che utilizzano tali GPIO.
 
-### Modulo Line tracking
+Nello script _switch.py_ è definita una funzione _switch(port, status)_ in cui _port_ da 1 a 3 identifica i GPIO 5,6,13 mentre _status_ identifica 1=led spento, 0=led acceso. Un richiamo a questa funzione si trova anche in _webServer.py_ a riga 128
 
-I fotoaccoppiatori per il line tracking sono collegati ai GPIO 19 (destro), 16 (centrale) e 20 (sinistro). Lo script che li gestisce è _findline.py_
+Nello script _robotLight.py_ a riga 14 erano definiti 16 led anzichè 12: ho corretto anche se questo non comporta nulla.
+
+All'inizio le funzioni di breathing led e police light mi funzionavano correttamente. Inspiegabilmente, dopo un po', hanno cominciato a non funzionare più: all'avvio la funzione del breathing fa due lampeggi corretti dopodichè si interrompe con il primo led che impazzisce e il secondo led che lo segue con intensità minore mentre gli altri rimangono fissi a blu. Se si avvia il webServer manualmente anzichè in automatico all'avvio, questo malfunzionamento non c'è. Non sono riuscito a capire qual è la causa del problema, per questo motivo nel _webServer.py_ a riga 522 ho commentato il richiamo alla funzione che fa l'effetto breathing e ho messo un colore verde fisso.
+
+### Line Following
+
+Ci sono due modalità di line following: con i fotoaccoppiatori o con la visione artificiale.
+
+I fotoaccoppiatori per il line tracking sono collegati ai GPIO 19 (destro), 16 (centrale) e 20 (sinistro). Lo script che li gestisce è _findline.py_. Il modulo line follower è fatto per rilevare una linea nera (spessa 1cm) su uno sfondo bianco e la sensibilità si può aggiustare agendo sul trimmer posto sul modulo. La modalità in questione si attiva premendo il tasto _Track Line_ nel riquadro _Actions_.
+
+La modalità di line following con la visione artificiale si fa dal riquadro _CVFL Control_ e si attiva premendo il tasto _Start_ ivi contenuto. Il tasto _Color_ serve per cambiare switchare tra due modalità: linea bianca su sfondo nero (default) o linea nera su sfondo bianco. La funzionalià di line follower visiva confronta due pixel adiacenti: i controlli _L1_ e _L2_ servono a definire la posizione dei due pixel. Il controllo _SP_ regola la soglia di intervento per la virata: valori troppo piccoli possono fare in modo che il robot non si muova più. Quando viene attivata questa funzionalità, lo schermo diventa in bianco e nero.
 
 ### Indicazione carica batteria
 
@@ -120,9 +132,18 @@ Le istruzioni che compaiono sull'interfaccia sono contenute dalla riga 1290 di _
 
 Sull'HAT sono disponibili altri due connettori denominati RGB1 e RGB2, pensati, probabilmente per collegare strisce di led RGB per le quali i colori vengono gestiti singolarmente sul connettore RGB1 sono collegati (partendo da pin1): 3.3V, GPIO22, 23 e 24. Sul connettore RGB2: 3.3V, GPIO10, 9 e 25. La cosa strana è che un richiamo a questi pin è presente, commentato, in _findline.py_ e personalmente ho pensato che in origine la Adeept abbia pensato di illuminare la linea da seguire in vari colori per misurare la riflessione di ogni colore e quindi riuscire anche a distinguere il colore della linea per eseguire varie funzioni. Fatto sta che questi 6 GPIO sono liberi e dotati di resistenze di pull-up.
 
-### Note
+### Note per i meno esperti
 
-Ogni volta che si fa una modifica ai files, per poter apprezzare il cambiamento è necessario svuotare la cache del browser, chiuderlo, riaprirlo e ridigitare l'indirizzo, altrimenti il browser carica sempre il javascript presente nella cache e non vediamo nessun cambiamento.
+Ogni volta che si fa una modifica ai javascript, per poter apprezzare il cambiamento è necessario svuotare la cache del browser, chiuderlo, riaprirlo e ridigitare l'indirizzo, altrimenti il browser carica sempre il javascript presente nella cache e non vediamo nessun cambiamento.
+
+Le modifiche ai files python da windows andrebbero fatte con delle precauzioni. Da Notepad++ selezionare queste opzioni:
+
+- Modifica > Converti carattere di fine linea > UNIX
+- Visualizza > Simboli > Mostra spazi bianchi e tabulazioni
+
+Python sfrutta le indentazioni per distinguere i blocchi di codice (gli _IF_, ad esempio, non hanno un corrispondente _end if_ nè sono racchiusi tra parentesi graffe: tutto quello che va in un blocco _IF_ è indentato al di sotto di esso). Per indentare i blocchi utilizzare una serie di 4 spazi anzichè la tabulazione. In Notepad++ gli spazi bianchi verranno indicati con dei puntini arancioni, mentre le tabulazioni con una freccia lunga verso destra: se ci sono delle tabulazioni, eliminatele e sostituitele con spazi oppure sfruttare la funzione apposita di Notepad++:
+
+- Modifica > Operazioni sugli spazi > Converti TAB in spazi
 
 ### Problemi vari sul Raspberry.
 

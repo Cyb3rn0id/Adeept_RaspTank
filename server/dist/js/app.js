@@ -301,7 +301,7 @@
                     }
                 }, [n("ControllerSheet", {
                     attrs: {
-                        modName: "Line Following"
+                        modName: "Line Following Visuale"
                     }
                 }, [n("CVFLMod")], 1)], 1)], 1)], 1), n("v-col", {
                     attrs: {
@@ -742,8 +742,8 @@
                 },
                 data: function() {
                     return {
-                        buttons: ["", [!0, "mdi-arrow-up-thick", "forward", 87, "DS"], "", [!0, "mdi-arrow-left-thick", "left", 65, "TS"],
-                            [!0, "mdi-arrow-down-thick", "backward", 83, "DS"],
+                        buttons: ["", [!0, "mdi-arrow-up-thick", "backward", 87, "DS"], "", [!0, "mdi-arrow-left-thick", "left", 65, "TS"],
+                            [!0, "mdi-arrow-down-thick", "forward", 83, "DS"],
                             [!0, "mdi-arrow-right-thick", "right", 68, "TS"]
                         ],
                         cols: 3,
