@@ -122,7 +122,7 @@ Ci sono due modalità di line following: con i fotoaccoppiatori o con la visione
 
 I fotoaccoppiatori per il line tracking sono collegati ai GPIO 19 (destro), 16 (centrale) e 20 (sinistro). Lo script che li gestisce è `findline.py`. Il modulo line follower è fatto per rilevare una linea nera (spessa 1cm) su uno sfondo bianco e la sensibilità si può aggiustare agendo sul trimmer posto sul modulo. La modalità in questione si attiva premendo il tasto <kbd>TRACK</kbd> Line nel riquadro <kbd>ACTIONS</kbd> dell'interfaccia.
 
-La modalità di line following con la visione artificiale si fa dal riquadro <kbd>CVFL Control</bkd> (che ho rinominato in _Line Following Visuale_) e si attiva premendo il tasto <kbd>START</kbd> ivi contenuto. 
+La modalità di line following con la visione artificiale si fa dal riquadro <kbd>CVFL Control</kbd> (che ho rinominato in <kbd>Line Following Visuale</kbd>) e si attiva premendo il tasto <kbd>START</kbd> ivi contenuto. 
 
 Il tasto <kbd>COLOR</kbd> serve per switchare tra due modalità di ricerca linea: linea bianca su sfondo nero (default) o linea nera su sfondo bianco. La funzionalià di line follower visiva confronta due pixel adiacenti: i controlli <kbd>L1</kbd> e <kbd>L2</kbd> servono a definire la posizione dei due pixel. Il controllo <kbd>SP</kbd> regola la soglia di intervento per la virata: valori troppo piccoli possono fare in modo che il robot non si muova più. Quando viene attivata questa funzionalità, lo schermo diventa in bianco e nero.
 
