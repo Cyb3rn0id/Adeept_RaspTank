@@ -1,5 +1,5 @@
 #!/usr/bin/env/python
-# File name   : server.py
+# File name   : webServer.py
 # Production  : GWR
 # Website     : www.adeept.com
 # Author      : William
@@ -205,7 +205,7 @@ def robotCtrl(command_input, response):
     if 'forward' == command_input:
         direction_command = 'forward'
         move.move(speed_set, 'forward', 'no', rad)
-    
+
     elif 'backward' == command_input:
         direction_command = 'backward'
         move.move(speed_set, 'backward', 'no', rad)
@@ -214,7 +214,6 @@ def robotCtrl(command_input, response):
         direction_command = 'no'
         if turn_command == 'no':
             move.move(speed_set, 'no', 'no', rad)
-
 
     elif 'left' == command_input:
         turn_command = 'left'
@@ -231,7 +230,6 @@ def robotCtrl(command_input, response):
         else:
             move.move(speed_set, direction_command, 'no', rad)
 
-
     elif 'lookleft' == command_input:
         P_sc.singleServo(14, -1, 3)
 
@@ -241,7 +239,6 @@ def robotCtrl(command_input, response):
     elif 'LRstop' in command_input:
         P_sc.stopWiggle()
 
-
     elif 'up' == command_input:
         T_sc.singleServo(11, -1, 3)
 
@@ -250,7 +247,6 @@ def robotCtrl(command_input, response):
 
     elif 'UDstop' in command_input:
         T_sc.stopWiggle()
-
 
     elif 'handup' == command_input:
         H1_sc.singleServo(12, 1, 7)
@@ -263,7 +259,6 @@ def robotCtrl(command_input, response):
     elif 'HAstop' in command_input:
         H1_sc.stopWiggle()
         H2_sc.stopWiggle()
-
 
     elif 'grab' == command_input:
         G_sc.singleServo(15, 1, 3)
@@ -436,8 +431,8 @@ async def recv_msg(websocket):
             configPWM(data, response)
 
             if 'get_info' == data:
-                response['title'] = 'get_info'
-                response['data'] = [info.get_cpu_tempfunc(), info.get_cpu_use(), info.get_ram_info()]
+                response['title'] = 'get_info' # aggiunto SSID
+                response['data'] = [info.get_cpu_tempfunc(), info.get_cpu_use(), info.get_ram_info(), info.get_connected_ssid()]
 
             if 'wsB' in data:
                 try:

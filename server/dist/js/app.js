@@ -321,7 +321,7 @@
                     }
                 }, [n("ControllerSheet", {
                     attrs: {
-                        modName: "Sistema"
+                        modName: "Informazioni"
                     }
                 }, [n("StatusMod")], 1)], 1), n("v-col", {
                     attrs: {
@@ -467,9 +467,10 @@
                 data: function() {
                     return {
                         chips: [
-                            ["CPU", "Temp", 50, "°C", 55, 70],
-                            ["CPU", "Usage", 75, "%", 70, 85],
-                            ["RAM", "Usage", 90, "%", 70, 85]
+                            ["Temp.", "CPU", 50, "°C", 55, 70],
+                            ["Uso", "CPU", 75, "%", 70, 85],
+                            ["Uso", "RAM", 90, "%", 70, 85],
+                            ["SSID", "", "...", "", , ]
                         ],
                         infoInterval: null
                     }
@@ -477,7 +478,7 @@
                 computed: Object(E["a"])({
                     chipColor: function() {
                         var t = [];
-                        for (var e in this.chips) this.chips[e][2] < this.chips[e][4] ? t.push("green") : this.chips[e][2] < this.chips[e][5] ? t.push("orange") : t.push("red");
+                        for (var e in this.chips) if (this.chips[e][0]!="SSID") {this.chips[e][2] < this.chips[e][4] ? t.push("green") : this.chips[e][2] < this.chips[e][5] ? t.push("orange") : t.push("red")} else {t.push("blue")};
                         return t
                     }
                 }, Object(I["d"])(["wsResponse"])),
@@ -697,10 +698,10 @@
                 data: function() {
                     return {
                         buttons: [
-                            [!1, "Motion Get", "motionGet", "", "", "stopCV"],
-                            [!1, "Automatic", "automatic", "", "", "automaticOff"],
-                            [!1, "Police Light", "police", "", "", "policeOff"],
-                            [!1, "Track Line", "trackLine", "", "", "trackLineOff"]
+                            [!1, "Rileva movimento", "motionGet", "", "", "stopCV"],
+                            [!1, "Automatico", "automatic", "", "", "automaticOff"],
+                            [!1, "Luci Polizia", "police", "", "", "policeOff"],
+                            [!1, "Line Follower", "trackLine", "", "", "trackLineOff"]
                         ],
                         cols: 1
                     }
@@ -1273,11 +1274,11 @@
                             key: o
                         }, [t._v(" " + t._s(o) + " - " + t._s(e)), n("br")])
                     })), 0)
-                }))], 2)], 1)], 1), n("v-expansion-panel", [n("v-expansion-panel-header", [t._v("About Us")]), n("v-expansion-panel-content", {
+                }))], 2)], 1)], 1), n("v-expansion-panel", [n("v-expansion-panel-header", [t._v("Informazioni Adeept")]), n("v-expansion-panel-content", {
                     staticStyle: {
                         "text-indent": "2rem"
                     }
-                }, [t._v(" " + t._s(t.instructContent["About Us"]) + " ")])], 1)], 1)
+                }, [t._v(" " + t._s(t.instructContent["Informazioni Adeept"]) + " ")])], 1)], 1)
             },
             ue = [],
             de = {
@@ -1297,7 +1298,7 @@
                                 }, {
                                     R: "alza telecamera",
                                     F: "abbassa telecamera",
-									K: "ruota pinza sx",
+                                    K: "ruota pinza sx",
                                     L: "ruota pinza dx",
                                     P: "chiudi pinza",
                                     O: "apri pinza",
@@ -1305,7 +1306,7 @@
                                     N: "braccio avanti"
                                 }]
                             ],
-                            "About Us": "Adeept is a technical service team of open source software and hardware. Dedicated to applying the Internet and the latest industrial technology in open source area, we strive to provide best hardware support and software service for general makers and electronic enthusiasts around the world. We aim to create infinite possibilities with sharing. No matter what field you are in, we can lead you into the electronic world and bring your ideas into reality.",
+                            "Informazioni Adeept": "Adeept is a technical service team of open source software and hardware. Dedicated to applying the Internet and the latest industrial technology in open source area, we strive to provide best hardware support and software service for general makers and electronic enthusiasts around the world. We aim to create infinite possibilities with sharing. No matter what field you are in, we can lead you into the electronic world and bring your ideas into reality.",
                             "Contact Us": "Have a technical question for Tech Support? support@adeept.com"
                         }
                     }
@@ -1574,12 +1575,12 @@
                         },
                         expression: "reconnectTip"
                     }
-                }, [t._v(" Connect Failed "), n("v-btn", {
+                }, [t._v(" Connessione Fallita "), n("v-btn", {
                     attrs: {
                         color: "pink",
                         text: ""
                     }
-                }, [t._v(" Reconnecting ")]), n("AniLoading"), n("v-overlay", {
+                }, [t._v(" Tentativo di riconnessione ")]), n("AniLoading"), n("v-overlay", {
                     attrs: {
                         absolute: "",
                         opacity: 0
@@ -1673,7 +1674,7 @@
                         if (this.wsContent) try {
                             this.websocketsend(this.wsContent)
                         } catch (t) {
-                            console.log("连接已关闭或正在连接中，无法发送数据"), this.changeWsContent("")
+                            console.log("connection closed or waiting. cannot send data"), this.changeWsContent("")
                         }
                     }
                 }

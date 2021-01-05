@@ -5,6 +5,8 @@
 # Author      : William
 # Date        : 2019/08/28
 import psutil
+import string
+import subprocess # richiesto per recuperare il ssid
 
 def get_cpu_tempfunc():
     """ Return CPU temperature """
@@ -41,3 +43,17 @@ def get_swap_info():
     """ Return swap memory  usage using psutil """
     swap_cent = psutil.swap_memory()[3]
     return str(swap_cent)
+
+
+#aggiunte
+
+def get_connected_ssid():
+    """ Return the ssid connected to """
+    try:
+        output=str(subprocess.check_output(['sudo', 'iwgetid']))
+        # SSID:  b'wlan0     ESSID:"GARM_sud"\n'
+        start=output.index('"')+1
+        end=output.rindex('"')
+        return (output[start:end])
+    except:
+        pass
