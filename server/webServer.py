@@ -505,7 +505,7 @@ async def main_logic(websocket, path):
     await recv_msg(websocket)
 
 if __name__ == '__main__':
-    time.sleep(2) 
+    time.sleep(2)
     #switch.switchSetup()
     #switch.set_all_switch_off()
 
