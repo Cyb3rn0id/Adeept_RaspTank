@@ -189,7 +189,7 @@ Le istruzioni che compaiono sull'interfaccia 23b sono contenute dalla riga `1290
 Sull'HAT sono disponibili altri due connettori denominati RGB1 e RGB2, pensati, probabilmente per collegare strisce di led RGB per le quali i colori vengono gestiti singolarmente.
 Sul connettore RGB1 sono collegati (partendo da pin1): 3.3V, GPIO22, 23 e 24. Sul connettore RGB2: 3.3V, GPIO10, 9 e 25. La cosa strana è che un richiamo a questi pin è presente, commentato, in `findline.py` e personalmente ho pensato che in origine la Adeept abbia pensato di illuminare la linea da seguire in vari colori per misurare la riflessione di ogni colore e quindi riuscire anche a distinguere il colore della linea per eseguire varie funzioni. Fatto sta che questi 6 GPIO sono liberi e dotati di resistenze di pull-up.
 
-Ho aggiunto uno script `checkinfo.py` giusto per testare la funzione che restituisce il SSID
+Ho aggiunto uno script `checkinfo.py` giusto per testare la funzione che restituisce il SSID.
 
 ### Note per i meno esperti che si accingono a fare modifiche
 
@@ -241,3 +241,13 @@ Ho un repository in cui [ho appuntato varie esperienze](https://github.com/Cyb3r
 - [Win32 Disk Imager](https://sourceforge.net/projects/win32diskimager/) - Per realizzare le microSD da inserire nel RaspberryPi
 
 _WinSCP_ è molto comodo per trasferire i files perchè visualizza da un lato le cartelle del vostro PC e dall'altro le cartelle del Raspberry Pi, come un qualsiasi programma FTP. Da comunque problemi se non ci sono i permessi di scrittura sulle cartelle/files, per cui a volte è utile settare i permessi utilizzando _PuTTY_ e poi procedere al trasferimento/modifica/cancellazione dei files tramite WinSCP. WinSCP ha anche un'interfaccia terminale che sfrutta l'SSH ma funziona molto male: meglio usare _PuTTY_.
+
+### Links
+
+- [Mia galleria fotografica](https://photos.app.goo.gl/g4kLfyX4Tnfr58ws5)
+- [Mio articolo sul Rasptank](http://www.tinyurl.com/rasptank)
+- [Acquisto Rasptank su Amazon - Link sponsorizzato](https://amzn.to/2M2hMEq)
+- [Pagina ufficiale prodotto](https://www.adeept.com/rasptank_p0121.html)
+- [Download Tutorials](https://www.adeept.com/learn/detail-34.html)
+- [Repository Adeept](https://github.com/adeept/adeept_rasptank)
+- [Forum Adeept](https://www.adeept.com/forum/group-category-57-1.html)
